@@ -1,6 +1,6 @@
 # FordProg beadandó
 
-Szöveges állomány tartalmának feldolgozása, abból megadott elemek adatszerkezetbe, vagy a kimenetre írása, kódokkal megadott módon.
+Szöveges állomány tartalmának feldolgozása, abból megadott elemek adatszerkezetbe, vagy a kimenetre írása, parancskódokkal megadott módon.
 
 Példa a parancs szerkezetére:
 '#u#b#iasdf#r2#e#ilkjh#r-1#t2#p#f#'
