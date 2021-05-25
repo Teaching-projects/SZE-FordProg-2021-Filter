@@ -17,7 +17,7 @@ $cmd = '#u#u123#t25#usdf#t12#'
 $cmd = '#iasdf#cwert#r12#o456#t21#ukjh#x-1#'
 $cmd = '#u#iasdf#r2#ilkjh#r-1#'
 $cmd = '#u#b#iasdf#r2#e#ilkjh#r-1#t2#p#f#'
-$cmd = '#o#b#iasdf#r2#e#gztre#r1#b#imasodik#e#i2vege#b#r31#e#r13#t5#'
+$cmd = '#b#iasdf#r2#e#g\s{1,3}#r12#n#s#p'
 
 write-host 'input data: ' $cmd $file 
 
@@ -144,8 +144,48 @@ foreach ($cmd in $cmdset){
     #aktualis parancs berendezese a vegrehajtasi loopba
 #loop-ot kezdhet b, u, o
     #tomb uj elem
-$filling = $false
 
+
+#legkisebb egyseg: b icg r e icg r n s p
+    if($cmd.keys -eq 'u' -or $cmd.keys -eq 'o' -or $cmd.keys -eq 'b'){
+        $seq += @{}     # nev nelkuli loop dict
+    }
+
+    if($cmd.keys -eq 'u' -or $cmd.keys -eq 'o' ){
+        $seq[$seq.length-1][[string]$cmd.keys] = '' # u vagy o
+    }
+
+    if($cmd.keys -eq 'b' -and ($state -eq 0 -or $state -eq 3 -or $state -eq 4 -or $state -eq 17) -and ($seq[$seq.length-1]['loop'] -eq $none)){
+        $seq[$seq.length-1]['loop'] = @{} 
+    }
+
+    if(($state -lt 7) -and ($cmd.keys -eq 'i' -or $cmd.keys -eq 'c' -or $cmd.keys -eq 'g')){
+        ($seq[$seq.length-1]['loop'])['b'+[string]$cmd.keys] = $cmd.values
+    }
+
+    if(($state -gt 7) -and ($cmd.keys -eq 'i' -or $cmd.keys -eq 'c' -or $cmd.keys -eq 'g')){
+        ($seq[$seq.length-1]['loop'])['e'+[string]$cmd.keys] = $cmd.values
+    }
+
+    if(($state -lt 7) -and $cmd.keys -eq 'r' ){
+        ($seq[$seq.length-1]['loop'])['b'+[string]$cmd.keys] = $cmd.values
+    }
+
+    if(($state -gt 7) -and $cmd.keys -eq 'r' ){
+        ($seq[$seq.length-1]['loop'])['e'+[string]$cmd.keys] = $cmd.values
+    }
+
+    if($cmd.keys -eq 'n' -or $cmd.keys -eq 's' -or $cmd.keys -eq 'p'){
+        ($seq[$seq.length-1]['loop'])[[string]$cmd.keys] = ''
+    }
+
+
+<# if ($state -eq 1){    
+}
+if($cmd.keys -eq 'b'){
+} #>
+
+$filling = $false
 if ($filling) {   
     if($cmd.keys -eq 'u' -or $cmd.keys -eq 'o' -or ($cmd.keys -eq 'b' -and ($state -eq 0 -or $state -eq 14 -or $state -eq 17 ))){
         $loop += @{}
@@ -204,7 +244,7 @@ if ($filling) {
 #if($state -eq 17 -and (-not ))
 Write-Host 'new: ' $state
 }   # foreach ($cmd in $cmdset)
-write-host ($loop | out-string)
+write-host ($seq | out-string)
 
 if($state -ne 18){
 
