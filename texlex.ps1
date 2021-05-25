@@ -148,7 +148,7 @@ foreach ($cmd in $cmdset){
 
 #legkisebb egyseg: b icg r e icg r n s p
     if($cmd.keys -eq 'u' -or $cmd.keys -eq 'o' -or $cmd.keys -eq 'b'){
-        $seq += @{}     # nev nelkuli loop dict
+        $seq += @{}     # nev nelkuli loop dict 
     }
 
     if($cmd.keys -eq 'u' -or $cmd.keys -eq 'o' ){
