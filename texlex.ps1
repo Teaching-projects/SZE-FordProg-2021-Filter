@@ -17,7 +17,7 @@ $cmd = '#u#u123#t25#usdf#t12#'
 $cmd = '#iasdf#cwert#r12#o456#t21#ukjh#x-1#'
 $cmd = '#u#iasdf#r2#ilkjh#r-1#'
 $cmd = '#u#b#iasdf#r2#e#ilkjh#r-1#t2#p#f#'
-$cmd = '#b#iasdf#r2#e#g\s{1,3}#r12#n#s#p'
+$cmd = '#b#iasdf#r2#e#g\s{1,3}#r12#n#saszerk#f#'
 
 write-host 'input data: ' $cmd $file 
 
@@ -49,21 +49,6 @@ $global:cmds =@{   b = ''; # begin
             n = ''; #insert LF
             p = ''; #output stream
             f = ''} # end symbol
-$global:base = 4
-$global:cmdeval  =@{    b = 0;
-                        e = 1
-                        o = 2;
-                        u = 3;                         
-                        i = 4;
-                        c = 5;
-                        g = 6;
-                        r = 7;
-                        t = 8;
-                        x = 9;
-                        s = 10;
-                        n = 11;
-                        p = 12;
-                        f = 13;}
 #endregion globals                        
 
 #region states
@@ -79,14 +64,14 @@ $global:states[6] = @{'r' = 7}
 $global:states[7] = @{'b' = 1;'o' = 4;'u' = 4; 'e' = 11} 
 $global:states[8] = @{'i' = 9;'c' = 9;'g' = 9;'r' = 10} 
 $global:states[9] = @{'r' = 10} 
-$global:states[10] = @{'b' = 1;'o' = 4;'u' = 4;'t' = 14;'x' = 14;'n' = 15;'s' = 16;'p' = 17}
+$global:states[10] = @{'b' = 1;'o' = 4;'u' = 4;'n' = 15;'s' = 16;'f' = 17}
 $global:states[11] = @{'i' = 12;'c' = 12;'g' = 12;'r' = 13} 
 $global:states[12] = @{'b' = 1;'r' = 13;'t' = 14;'x' = 14} 
-$global:states[13] = @{'b' = 1;'o' = 4;'u' = 4;'t' = 14;'x' = 14} 
-$global:states[14] = @{'b' = 1;'o' = 4;'u' = 4;'n' = 15;'s' = 16;'p' = 17} 
-$global:states[15] = @{'n' = 15;'s' = 16;'p' = 17} 
-$global:states[16] = @{'n' = 15;'s' = 16;'p' = 17} 
-$global:states[17] = @{'f' = 18}
+$global:states[13] = @{'b' = 1;'t' = 14;'x' = 14;'n' = 15;'s' = 16} 
+$global:states[14] = @{'b' = 1;'o' = 4;'u' = 4;'n' = 15;'s' = 16;'f' = 17} 
+$global:states[15] = @{'b' = 1;'o' = 4;'u' = 4;'n' = 15;'s' = 16;'f' = 17} 
+$global:states[16] = @{'b' = 1;'o' = 4;'u' = 4;'n' = 15;'s' = 16;'f' = 17} 
+#$global:states[17] = @{'f' = 18}
 #endregion states                     
 
 #write-host ($global:cmdeval['u']).gettype().name
@@ -125,12 +110,13 @@ function cmdset_read{
 
 
 $seq = @()  # lista a loop elemekkel
-$loop = @()    #nagykor
+#$loop = @()    #nagykor
 $pair_counter = @{'o' = 0; 'u' = 0 ; 't' = 0 ; 'x' = 0 }
 
 $checkval = 0
 $flag = 0
 $state = 0
+$ou = $false
 
 #$_1chk = $true
 
@@ -147,19 +133,25 @@ foreach ($cmd in $cmdset){
 
 
 #legkisebb egyseg: b icg r e icg r n s p
-    if($cmd.keys -eq 'u' -or $cmd.keys -eq 'o' -or $cmd.keys -eq 'b'){
-        $seq += @{}     # nev nelkuli loop dict 
+    if($cmd.keys -eq 'u' -or $cmd.keys -eq 'o'){
+        $seq += @{}     # tobbszorozos mindig uj dict
+        $seq[$seq.length-1][[string]$cmd.keys] = '' # u vagy o        
+        #$ou = $true
     }
 
-    if($cmd.keys -eq 'u' -or $cmd.keys -eq 'o' ){
-        $seq[$seq.length-1][[string]$cmd.keys] = '' # u vagy o
+    if($cmd.keys -eq 'b' -and ($state -eq 0 -or $state -eq 3 -or  $state -gt 13)){
+        $seq += @{}
     }
 
-    if($cmd.keys -eq 'b' -and ($state -eq 0 -or $state -eq 3 -or $state -eq 4 -or $state -eq 17) -and ($seq[$seq.length-1]['loop'] -eq $none)){
-        $seq[$seq.length-1]['loop'] = @{} 
+    if($cmd.keys -eq 'b'){
+        $seq[$seq.length-1]['loop'] = @{}
     }
-
+ 
     if(($state -lt 7) -and ($cmd.keys -eq 'i' -or $cmd.keys -eq 'c' -or $cmd.keys -eq 'g')){
+        ($seq[$seq.length-1]['loop'])['b'+[string]$cmd.keys] = $cmd.values
+    }
+
+    if(($state -lt 7) -and $cmd.keys -eq 'r' ){
         ($seq[$seq.length-1]['loop'])['b'+[string]$cmd.keys] = $cmd.values
     }
 
@@ -167,17 +159,23 @@ foreach ($cmd in $cmdset){
         ($seq[$seq.length-1]['loop'])['e'+[string]$cmd.keys] = $cmd.values
     }
 
-    if(($state -lt 7) -and $cmd.keys -eq 'r' ){
-        ($seq[$seq.length-1]['loop'])['b'+[string]$cmd.keys] = $cmd.values
-    }
-
     if(($state -gt 7) -and $cmd.keys -eq 'r' ){
         ($seq[$seq.length-1]['loop'])['e'+[string]$cmd.keys] = $cmd.values
     }
 
-    if($cmd.keys -eq 'n' -or $cmd.keys -eq 's' -or $cmd.keys -eq 'p'){
+    if(($state -lt 12) -and ($cmd.keys -eq 'n' -or $cmd.keys -eq 's')){  # sima belso vege
         ($seq[$seq.length-1]['loop'])[[string]$cmd.keys] = ''
     }
+
+    if($cmd.keys -eq 't' -or $cmd.keys -eq 'x'){  # sima belso vege
+        $seq[$seq.length-1][[string]$cmd.keys] = $cmd.values
+    }
+
+    if(($state -gt 12) -and ($cmd.keys -eq 'n' -or $cmd.keys -eq 's' -or $cmd.keys -eq 'f')){  # sima belso vege
+        $seq[$seq.length-1][[string]$cmd.keys] = ''
+    }
+########
+
 
 
 <# if ($state -eq 1){    
@@ -246,7 +244,7 @@ Write-Host 'new: ' $state
 }   # foreach ($cmd in $cmdset)
 write-host ($seq | out-string)
 
-if($state -ne 18){
+if($state -ne 17){
 
     Write-Host 'Command sequence error, no acc.'
 }else{
