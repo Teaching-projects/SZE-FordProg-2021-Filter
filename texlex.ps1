@@ -8,25 +8,31 @@ function main {
 
 $file = "D:\_EGYETEMI\FordProg\INGR_lizenz_roh.txt"
 
-$cmd = "#u#b#g\splm#e#i-----#r4#n#sadatok2#x#iconcurr#r4#n#stomb3#"
+<# $cmd = "#u#b#g\splm#e#i-----#r4#n#sadatok2#x#iconcurr#r4#n#stomb3#"
 $cmd += '#o#b#g-----\n\s{2}#r7#e#g\n\s{2}#r3#n#stomb1#t0#'
 $cmd += '#n#f#'
+
+$cmd = "#b#isplm#e#g-----\r\n\s{2}#r7#" #>
+$cmd = "#b#g-----\r\n\s{2}#r7#e#g\s\d{1,3}[.]\d{1,3}#r4#"
+$cmd += ''
+$cmd += '#f#'
+
 
 #write-host  $cmd
 $cmd = $cmd -replace '##','#'
 
-write-host 'input data: ' $cmd $file 
+write-host '   INFO:  input data:  ' $cmd"`r`n   "$file 
 
 
 if ( $file.length -gt 0 ){
     if(test-path $file){
-            write-host 'file valid'
+            write-host "`r`n   INFO:  file valid"
     }else{
-        write-host 'file invalid'
+        write-host ' ERROR:  file invalid'
         exit
     }
 }else{
-    write-host 'file invalid'
+    write-host ' ERROR:  file invalid'
     exit
 }
 
@@ -89,24 +95,26 @@ $global:states[22] = @{'b' = 1;'o' = 4;'u' = 4;'n' = 21;'f' = 23}
 
 
 
-write-host "`r`n splitter literal : " $split
+write-host "`r`n   INFO:  splitter literal : " $split
 cmd_read $cmd
 
 if( $null -ne $global:cmdset) {
-write-host "`r`n command syntactically valid `r`n" #($global:cmdset | out-string)
+write-host "`r`n   INFO:  command syntactically valid `r`n" #($global:cmdset | out-string)
 }else{
-    write-host "`r`n something went wrong `r`n"
+    write-host "`r`n ERROR:  something went wrong `r`n"
     exit
 }
 #write-host ($global:cmdset | out-string)
 
 cmdset_read 
 $global:filetext = [IO.File]::ReadAllText($file)
+#$global:filetext
+
 
 execute 
 
-#$global:filetext
-#pause
+$global:result
+pause
 
 } #main
 
@@ -120,7 +128,7 @@ $global:index = 0
 #$pos1 = 0
 $cond = $false
 
-$test = $true
+$test = $false
 
 if ($test){
     foreach ($step in $global:seq){
@@ -138,16 +146,18 @@ foreach ($step in $global:seq){ # nagykorok
     #van benne egy loop()   ebbe megy az iloop belso ciklus
     #lehet meg n, s
     # a vege f ??
-
-    if($step.ContainsKey('o') ){  #van o tobbszorozes, biztos, ami biztos nagyobb 0
+    $t = 1
+    if($step.ContainsKey('o') -and (-not $step.ContainsKey('u')) ){  #van o tobbszorozes, biztos, ami biztos nagyobb 0
         if([int]$step['t'] -lt 1 ){
             write-host 't is less then 1...'
             exit
-        }elseif(-not $step['u']){
+        }else{
+            $t = [int]$step['t']
+            $cond = $false
 
         }
     }
-
+    # $step.ContainsKey('o')
     # a vari ciklus előtt minden érték ismert.
     # o, t nagyobb 0 szémlálásnál t létét kérdezzük le feltételként
     # u-x nél i-c-g r alapján 3 if-fel előre megkeressük a feltétel poziciojat
@@ -177,13 +187,18 @@ foreach ($step in $global:seq){ # nagykorok
             # mindkettot egy tombben kell visszakapni
             # egyszerre elkeszulnek
             $range = loop_find $iloop
+            if($range.Get_Item('b') -gt $range.Get_Item('e')){
+                write-host "`r`n ERROR:  range error `r`n"
+                exit
+
+            }
 
             if((($range.Get_Item('b') -lt $cond_pos) -and ($range.Get_Item('e')  -lt $cond_pos)) -or (($counter -lt $t) -or ($null -eq $t))){
                 #az aktualis range belul van $cond_pos on
 
                 $iloop_result += $global:filetext.substring($range.Get_Item('b'), $range.Get_Item('e')-$range.Get_Item('b')+1)
 
-                $loop_result += $iloop_result
+
                 if ($iloop['n']){
                     $iloop_result += "`r`n"
                 }
@@ -193,12 +208,17 @@ foreach ($step in $global:seq){ # nagykorok
                     }
                     $global:result_data[[string]($iloop['s'])] += $iloop_result
                 }
+                $loop_result += $iloop_result
+
+            }else{  # valamelyik pos kivul esik, nincs adat
+                $cond = $true
             }
+            $global:index += ($range.Get_Item('e'))
         }   #foreach ($iloop in $step.loop)     idaig
 
-        if($step.ContainsKey('o')){ $counter += 1 }
+        if($step.ContainsKey('o')){ $counter += 1 }elseif($counter -lt 1){ $counter = 1}
     }
-    $loop_result += $iloop_result
+    #$loop_result += $iloop_result
     if ($step['n']){
         $loop_result += "`r`n"
     }
