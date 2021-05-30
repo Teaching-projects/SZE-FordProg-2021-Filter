@@ -9,7 +9,7 @@ function main {
     #test data
 
     $file = "D:\_EGYETEMI\FordProg\INGR_lizenz_roh.txt"
-    $cmd = "#b#g-----\r\n\s{2}#r7#e#g\s\d{1,3}[.]\d{1,3}#r4#"
+    $cmd = "#b#g-----\r\n\s{2}#r7#e#g\s\d{1,3}[.]\d{1,3}#r4#sdata#"
     $cmd += '#f#'
     
     $cmd = $cmd -replace '##','#'
@@ -100,6 +100,8 @@ function main {
     }else{
         $global:result
     }
+
+    write-host ($global:result_data | out-string)
 } #main
 
 function execute{
