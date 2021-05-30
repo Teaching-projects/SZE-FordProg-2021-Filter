@@ -8,14 +8,13 @@ function main {
 
 $file = "D:\_EGYETEMI\FordProg\INGR_lizenz_roh.txt"
 
-$cmd = '#t123#iszo#r2#u#iertz#r2#usd#'
-$cmd = '#u#u123#t25#usdf#t12#'
-$cmd = '#iasdf#cwert#r12#o456#t21#ukjh#x-1#'
-$cmd = '#u#iasdf#r2#ilkjh#r-1#'
-$cmd = '#u#b#iasdf#r2#e#ilkjh#r-1#t2#p#f#'
-$cmd = '#o#b#iasdf#r2#e#g\s{1,3}#n#t5#saszerk#b#cgfd#r-2#e#ilkj#f#'
-$cmd = '#b#isplm#e#i-----#r4#n#u#b#g-----\n\s{2}#r7#e#g\n\s{2}#r3#n#x#iconcurr#r-1#f#'
-$cmd = '#b#isplm#e#i-----#r4#n#u#b#g-----\n\s{2}#r7#e#g\n\s{2}#r3#n#f#'
+$cmd = "#u#b#g\splm#e#i-----#r4#n#sadatok2#x#iconcurr#r4#n#stomb3#"
+$cmd += '#o#b#g-----\n\s{2}#r7#e#g\n\s{2}#r3#n#stomb1#t0#'
+$cmd += '#n#f#'
+
+#write-host  $cmd
+$cmd = $cmd -replace '##','#'
+
 write-host 'input data: ' $cmd $file 
 
 
@@ -42,15 +41,18 @@ $global:cmds =@{   b = ''; # begin
             t = 'int32'; #count multiple
             u = ''; #start until
             x = ''; # until condition
-            s = 'string'; # save in array
+            s = 'string'; # save in array, named string
             n = ''; #insert LF
             p = ''; #output stream
             f = ''} # end symbol
 
 $global:seq = $none
 $global:cmdset = $none
-$global:pos
-$global:filetext
+#$global:pos
+#$global:filetext
+
+$global:result = ''
+$global:result_data = @{}
 
 #endregion globals                        
 
@@ -96,58 +98,166 @@ write-host "`r`n command syntactically valid `r`n" #($global:cmdset | out-string
     write-host "`r`n something went wrong `r`n"
     exit
 }
-write-host ($global:cmdset | out-string)
+#write-host ($global:cmdset | out-string)
 
-cmdset_read $global:cmdset
+cmdset_read 
+$global:filetext = [IO.File]::ReadAllText($file)
 
-execute $global:seq
+execute 
+
+#$global:filetext
+#pause
 
 } #main
 
 function execute{
-    param(
-        $cmd_seq
-    )
+#$global:seq
 
-foreach ($step in $cmd_seq){ # nagykorok
-# lehet o-t, darabszamszor
-#lehet u-x feltételig
+$loop_result =''
+$iloop_result =''
+$counter = 0
+$global:index = 0
+#$pos1 = 0
+$cond = $false
 
-    foreach ($iloop in $step.loop){
-    #loop() elemei bicg, br, eicg, er, n,s       
-    
+$test = $true
 
+if ($test){
+    foreach ($step in $global:seq){
+        write-host $global:seq.indexof($step)'. step '($step | out-string)
+        foreach ($iloop in $step.loop){
+            write-host $step.loop.indexof($iloop)'. iloop '($iloop | out-string)
+        }   #$array.indexof($element)
     }
-}
+#exit
 }
 
-<# function vari_loop{
-    param(
-        $t = 0,
-        $icg = '',
-        $x = ''
+foreach ($step in $global:seq){ # nagykorok
+    # lehet o-t, darabszamszor
+    #lehet u-x feltételig
+    #van benne egy loop()   ebbe megy az iloop belso ciklus
+    #lehet meg n, s
+    # a vege f ??
 
-    )
-    #mindket ciklus egy loopban
-    #a darabszamot es a vegfeltetelt is figyeli, amit kapott, azzal loopol
-    if($t -ne 0 -and ($icg -ne '' -or $x -ne '')){
-        write-host 'error in function call vari-loop...'
-        exit
+    if($step.ContainsKey('o') ){  #van o tobbszorozes, biztos, ami biztos nagyobb 0
+        if([int]$step['t'] -lt 1 ){
+            write-host 't is less then 1...'
+            exit
+        }elseif(-not $step['u']){
+
+        }
     }
-    $counter = 0
-    do{
 
-        $counter += 1
+    # a vari ciklus előtt minden érték ismert.
+    # o, t nagyobb 0 szémlálásnál t létét kérdezzük le feltételként
+    # u-x nél i-c-g r alapján 3 if-fel előre megkeressük a feltétel poziciojat
+    #
+  
 
-    }until($counter -eq $t -or )
+# $index az aktualis abszolut pozicio a szovegben
+#write-host ((($counter -lt $t) -or ($null -eq $t)) -and (-not $cond))
+    while((($counter -lt $t) -or ($null -eq $t)) -and (-not $cond)){
+        #$counter t-ig számlál, ha van t
+        #u-x nél 
+        $cond_pos = step_find $step
 
+        #a kovetkezo loop elemmel
+        #eleje kereses
+        #osszehasonlitas $con_pos
+
+        #vege kereses
+        #osszehasonlitas $con_pos
+        $iloop_result = ''
+        foreach ($iloop in $step.loop){
+            #loop() elemei bicg, br, eicg, er, n,s       
+            #az iloop hivja 2x a kereseseket es a kozte levot 
+            # a vegen n soremeles hozzafuz
+            # a vegen s, adatszerkezethez
+
+            # mindkettot egy tombben kell visszakapni
+            # egyszerre elkeszulnek
+            $range = loop_find $iloop
+
+            if((($range.Get_Item('b') -lt $cond_pos) -and ($range.Get_Item('e')  -lt $cond_pos)) -or (($counter -lt $t) -or ($null -eq $t))){
+                #az aktualis range belul van $cond_pos on
+
+                $iloop_result += $global:filetext.substring($range.Get_Item('b'), $range.Get_Item('e')-$range.Get_Item('b')+1)
+
+                $loop_result += $iloop_result
+                if ($iloop['n']){
+                    $iloop_result += "`r`n"
+                }
+                if ($iloop['s']){
+                    if(-not [bool]$global:result_data[[string]($iloop['s'])] ){
+                    $global:result_data[[string]($iloop['s'])] = @()
+                    }
+                    $global:result_data[[string]($iloop['s'])] += $iloop_result
+                }
+            }
+        }   #foreach ($iloop in $step.loop)     idaig
+
+        if($step.ContainsKey('o')){ $counter += 1 }
+    }
+    $loop_result += $iloop_result
+    if ($step['n']){
+        $loop_result += "`r`n"
+    }
+    if ($step['s']){
+        if(-not [bool]$global:result_data[[string]($step['s'])] ){
+        $global:result_data[[string]($step['s'])] = @()
+        }
+        $global:result_data[[string]($step['s'])] += $loop_result
+    }
+    $global:result += $loop_result
+}   #foreach ($step in $cmd_seq)
+}   #function execute
+
+
+
+<# if($step.ContainsKey('g') ){
+    write-host $findfname+' g '+$index+' '+$step['g']
+    $pos1 = Invoke-Expression $findfname+' g '+$index+' '+$step['g']  
 } #>
+
+function step_find{
+    param(
+        $step
+    )
+    $pos = -1
+    foreach($key in $step.keys){
+        #write-host $key
+        if($key.indexof('i') -gt -1 -or $key.indexof('c') -gt -1 -or $key.indexof('g') -gt -1 ){
+            $expr1 = (("find_"+$key)+' '+($global:index)+' "'+($step.Get_Item($key))+'" '+($step.Get_Item('r'))).Replace("`r`n","")
+            #write-host $expr1 
+            #pos-nak dict-et, mert a sorrend nem biztos. A dict a 0. betu nevebol
+            $pos = Invoke-Expression $expr1 
+        }
+    }
+    $pos
+}
+
+function loop_find{
+    param(
+        $step
+    )
+    $pos = @{}
+    foreach($key in $step.keys){
+        #write-host $key
+        <# $key = $key.Replace("e","")
+        $key = $key.Replace("b","") #>
+        $rel = $key.substring(0,1)+'r'
+        if($key.indexof('i') -gt -1 -or $key.indexof('c') -gt -1 -or $key.indexof('g') -gt -1 ){
+            $expr1 = (("find_"+($key.Replace("e","")).Replace("b",""))+' '+($global:index)+' "'+($step.Get_Item($key))+'" '+($step.Get_Item($rel))).Replace("`r`n","")
+            write-host $expr1 
+            $pos[$key.substring(0,1)] = Invoke-Expression $expr1 
+        }
+    }
+    $pos
+}
 
 
 function cmdset_read{
-    param(
-        $global:cmdset
-    )
+
 $global:seq = @()  # lista a loop elemekkel
 $pair_counter = @{'o' = 0; 'u' = 0 ; 't' = 0 ; 'x' = 0 }
 $state = 0
@@ -156,61 +266,78 @@ foreach ($cmd in $global:cmdset){
 
     if($cmd.keys -eq 'u' -or $cmd.keys -eq 'o'){
         $global:seq += @{}     # tobbszorozos mindig uj dict
-        $global:seq[$global:seq.length-1][[string]$cmd.keys] = '' # u vagy o
-        $pair_counter[[string]$cmd.keys] += 1        
+        $seq_counter = $global:seq.length-1
+        $global:seq[$seq_counter][[string]$cmd.keys] = '' # u vagy o
+        $pair_counter[[string]$cmd.keys] += 1
+        $tx = $false        
     }
 
     if($cmd.keys -eq 'b' -and ($state -lt 4 -or $state -gt 17)){
         $global:seq += @{}
+        $seq_counter = $global:seq.length-1
     }
 
     if($cmd.keys -eq 'b'){
-        $global:seq[$global:seq.length-1]['loop'] = @{}
+        if(-not [bool]$global:seq[$seq_counter]['loop'] ){
+            $global:seq[$seq_counter]['loop'] = @()
+        }
+        ($global:seq[$seq_counter]['loop']) += @{}
+        $loop_counter = ($global:seq[$seq_counter]['loop']).Count -1
     }
  
     if(($state -lt 7) -and ($cmd.keys -eq 'i' -or $cmd.keys -eq 'c' -or $cmd.keys -eq 'g')){
-        ($global:seq[$global:seq.length-1]['loop'])['b'+[string]$cmd.keys] = $cmd.values
+       ((($global:seq[$seq_counter]['loop'])[$loop_counter]))['b'+[string]$cmd.keys] = ($cmd.values | out-string)
     }
 
     if(($state -lt 7) -and $cmd.keys -eq 'r' ){
-        ($global:seq[$global:seq.length-1]['loop'])['b'+[string]$cmd.keys] = $cmd.values
+        ((($global:seq[$seq_counter]['loop'])[$loop_counter]))['b'+[string]$cmd.keys] = ($cmd.values | out-string)   
     }
-
     if(($state -gt 7) -and ($cmd.keys -eq 'i' -or $cmd.keys -eq 'c' -or $cmd.keys -eq 'g')){
-        ($global:seq[$global:seq.length-1]['loop'])['e'+[string]$cmd.keys] = $cmd.values
+        if($tx){
+            $global:seq[$seq_counter][[string]$cmd.keys] = ($cmd.values | out-string)
+        }else{((($global:seq[$seq_counter]['loop'])[$loop_counter]))['e'+[string]$cmd.keys] = ($cmd.values | out-string)
+        }
     }
 
     if(($state -gt 7) -and $cmd.keys -eq 'r' ){
-        ($global:seq[$global:seq.length-1]['loop'])['e'+[string]$cmd.keys] = $cmd.values
+        if($tx){
+            $global:seq[$seq_counter][[string]$cmd.keys] = ($cmd.values | out-string)
+        }else{((($global:seq[$seq_counter]['loop'])[$loop_counter]))['e'+[string]$cmd.keys] = ($cmd.values | out-string)
+        }
     }
 
-    if(($state -lt 13) -and ($cmd.keys -eq 'n' -or $cmd.keys -eq 's' -or $cmd.keys -eq 'f')){  # sima belso vege
-        ($global:seq[$global:seq.length-1]['loop'])[[string]$cmd.keys] = ''
+    if(($state -lt 18) -and ($cmd.keys -eq 'n' -or $cmd.keys -eq 's')){  # sima belso vege
+        ((($global:seq[$seq_counter]['loop'])[$loop_counter]))[[string]$cmd.keys] = ($cmd.values | out-string)
+    }
+
+    if(($state -gt 18) -and ($cmd.keys -eq 'n' -or $cmd.keys -eq 's')){  # sima belso vege
+        $global:seq[$seq_counter][[string]$cmd.keys] = ($cmd.values | out-string)
     }
 
     if($cmd.keys -eq 't' -or $cmd.keys -eq 'x'){  # sima belso vege
-        $global:seq[$global:seq.length-1][[string]$cmd.keys] = $cmd.values
-        $pair_counter[[string]$cmd.keys] += 1 
+        $global:seq[$seq_counter][[string]$cmd.keys] = ($cmd.values | out-string)
+        $pair_counter[[string]$cmd.keys] += 1
+        $tx = $true 
     }
 
-    if(($state -gt 15) -and ($cmd.keys -eq 'n' -or $cmd.keys -eq 's' -or $cmd.keys -eq 'f')){  # sima belso vege
-        $global:seq[$global:seq.length-1][[string]$cmd.keys] = ''
+    if($cmd.keys -eq 'f'){  # sima belso vege
+        $global:seq[$seq_counter][[string]$cmd.keys] = ''
     }
 ########
 
     #a végén állítjuk elő a következő lépést
-    Write-Host 'old ' $state 'cmd: ' $cmd.keys
+    #Write-Host 'old ' $state 'cmd: ' $cmd.keys
     $state = ($global:states[$state])[[string]$cmd.keys]
     if (-not $state ){
         write-host 'state error'
     }
 
 #if($state -eq 17 -and (-not ))
-Write-Host 'new: ' $state
+#Write-Host 'new: ' $state
 }   # foreach ($cmd in $global:cmdset)
 
 
-write-host ($global:seq | out-string)
+#write-host ($global:seq | out-string)
 
 if($state -eq 23){
     if(($pair_counter['o'] -eq $pair_counter['t']) -and ($pair_counter['u'] -eq $pair_counter['x'])){
@@ -227,10 +354,10 @@ if($state -eq 23){
 
 function find_c{
     param(
-        [string]$where,
         [int]$start,
         [string]$what,
-        [int]$rel = 0
+        [int]$rel = 0,
+        [string]$where = $global:filetext
     )
     $pos = -1
     $pos =  ($where.substring($start)).IndexOf($what)
@@ -242,13 +369,13 @@ function find_c{
 
 function find_i{
     param(
-        [string]$where,
         [int]$start,
         [string]$what,
-        [int]$rel = 0
+        [int]$rel = 0,
+        [string]$where = $global:filetext
     )
     $pos = -1
-    $pos =  ($where.substring($start)).IndexOf($what)
+    $pos =  (($where.ToLower()).substring($start)).IndexOf($what.ToLower())
     if($pos -gt -1){
         $pos += $rel
     }
@@ -257,14 +384,15 @@ function find_i{
 
 function find_g{
     param(
-        [string]$where,
         [int]$start,
         [string]$what,
-        [int]$rel = 0
+        [int]$rel = 0,
+        [string]$where = $global:filetext
     )
     $pos = -1
-    $pos =  ($where.substring($start)).IndexOf($what)
-    if($pos -gt -1){
+    $search =  [regex]::match($where.substring($start),$what)
+    $pos = $search.index
+    if($search.success){
         $pos += $rel
     }
     $pos
@@ -279,7 +407,7 @@ function cmd_read{
     $global:cmdset = @()
     #$notype = $true
     while (($index -lt $cmd.length-2) -and ($pos1 -ne -1)) { #a szoveg hosszan belul es talalt kovetkezot
-        $pos1 = find_c $cmd $index $split 1      # a kovetkezo # utani abszolut index
+        $pos1 = find_c $index $split 1 $cmd      # a kovetkezo # utani abszolut index
         if ($pos1 -ne -1){              # ha van kovetkezo #
             $index += $pos1 # a parancs betujenel allunk    Abszolut index-szel a talalat elejere allunk
             #write-host $cmd $index
@@ -287,7 +415,7 @@ function cmd_read{
             #write-host $cmd.substring($index,1)
             if($global:cmds.ContainsKey($cmd.substring($index,1))){    #lekerdezzuk, hogy van-e ilyen parancs
                 #write-host 'parancs' 
-                $pos2 =  (find_c $cmd $index $split -1) # elmegyunk a kovetkezo # ig
+                $pos2 =  (find_c $index $split -1 $cmd ) # elmegyunk a kovetkezo # ig
                 #write-host $cmd $index $pos2 
                 if($global:cmds[$cmd.substring($index,1)] -ne ''){ #van argumentum tipus 
                     if ($pos2 -gt 0 ){  #ha 1, akkor nincs argumentum a parancshoz
@@ -324,7 +452,7 @@ function cmd_read{
                 #write-host 'index+pos2: '$index 
         }
     }
-    $global:cmdset
+    #$global:cmdset
 }
 
 main 
