@@ -14,7 +14,7 @@ $cmd += '#n#f#'
 
 $cmd = "#b#isplm#e#g-----\r\n\s{2}#r7#" #>
 $cmd = "#b#g-----\r\n\s{2}#r7#e#g\s\d{1,3}[.]\d{1,3}#r4#"
-$cmd += ''
+#$cmd += '#b#r6#e#r15#'
 $cmd += '#f#'
 
 
@@ -99,30 +99,30 @@ write-host "`r`n   INFO:  splitter literal : " $split
 cmd_read $cmd
 
 if( $null -ne $global:cmdset) {
-write-host "`r`n   INFO:  command syntactically valid `r`n" #($global:cmdset | out-string)
+write-host "`r`n   INFO:  command syntactically valid" #($global:cmdset | out-string)
 }else{
-    write-host "`r`n ERROR:  something went wrong `r`n"
+    write-host "`r`n ERROR:  something went wrong..."
     exit
 }
 #write-host ($global:cmdset | out-string)
 
 cmdset_read 
-$global:filetext = [IO.File]::ReadAllText($file)
+$global:filetext = ([IO.File]::ReadAllText($file)).trim()
 #$global:filetext
 
 
 execute 
 
 $global:result
-pause
+#pause
 
 } #main
 
 function execute{
 #$global:seq
 
-$loop_result =''
-$iloop_result =''
+
+
 $counter = 0
 $global:index = 0
 #$pos1 = 0
@@ -146,6 +146,7 @@ foreach ($step in $global:seq){ # nagykorok
     #van benne egy loop()   ebbe megy az iloop belso ciklus
     #lehet meg n, s
     # a vege f ??
+    $loop_result =''
     $t = 1
     if($step.ContainsKey('o') -and (-not $step.ContainsKey('u')) ){  #van o tobbszorozes, biztos, ami biztos nagyobb 0
         if([int]$step['t'] -lt 1 ){
@@ -187,7 +188,8 @@ foreach ($step in $global:seq){ # nagykorok
             # mindkettot egy tombben kell visszakapni
             # egyszerre elkeszulnek
             $range = loop_find $iloop
-            if($range.Get_Item('b') -gt $range.Get_Item('e')){
+            #write-host
+            if([int]$range.Get_Item('b') -gt [int]$range.Get_Item('e')){
                 write-host "`r`n ERROR:  range error `r`n"
                 exit
 
@@ -229,6 +231,7 @@ foreach ($step in $global:seq){ # nagykorok
         $global:result_data[[string]($step['s'])] += $loop_result
     }
     $global:result += $loop_result
+
 }   #foreach ($step in $cmd_seq)
 }   #function execute
 
@@ -253,6 +256,9 @@ function step_find{
             $pos = Invoke-Expression $expr1 
         }
     }
+    if(-not $step.ContainsKey('i') -and -not $step.ContainsKey('c') -and -not $step.ContainsKey('g') -and $step.ContainsKey('r')){
+        $pos = $step.Get_Item('r')
+    }
     $pos
 }
 
@@ -268,9 +274,16 @@ function loop_find{
         $rel = $key.substring(0,1)+'r'
         if($key.indexof('i') -gt -1 -or $key.indexof('c') -gt -1 -or $key.indexof('g') -gt -1 ){
             $expr1 = (("find_"+($key.Replace("e","")).Replace("b",""))+' '+($global:index)+' "'+($step.Get_Item($key))+'" '+($step.Get_Item($rel))).Replace("`r`n","")
-            write-host $expr1 
+            #write-host $expr1 
             $pos[$key.substring(0,1)] = Invoke-Expression $expr1 
         }
+    }
+    #$step.ContainsKey('o')
+    if(-not $pos.ContainsKey('b') -and -not $step.ContainsKey('bi') -and -not $step.ContainsKey('bc') -and -not $step.ContainsKey('bg') -and $step.ContainsKey('br')){
+        $pos['b'] = $step.Get_Item('br')
+    }
+    if(-not $pos.ContainsKey('e') -and -not $step.ContainsKey('ei') -and -not $step.ContainsKey('ec') -and -not $step.ContainsKey('eg') -and $step.ContainsKey('er')){
+        $pos['e'] = $step.Get_Item('er')
     }
     $pos
 }
@@ -361,13 +374,13 @@ foreach ($cmd in $global:cmdset){
 
 if($state -eq 23){
     if(($pair_counter['o'] -eq $pair_counter['t']) -and ($pair_counter['u'] -eq $pair_counter['x'])){
-        Write-Host 'Command sequence processed succsesfully'
+        Write-Host "`r`n   INFO:  Command sequence processed succsesfully"
     }else{
-        Write-Host 'Command sequence error, o-t or u-x pairs not match'
+        Write-Host "`r`n ERROR:  Command sequence error, o-t or u-x pairs not match"
         exit
     }
 }else{
-    Write-Host 'Command sequence error, no acc.'
+    Write-Host "`r`n ERROR:  Command sequence error, no acc."
     exit
 }
 }   # function cmdset_read
