@@ -36,3 +36,30 @@ A parancsok argumentum tipusai ('' = nincs argumentum):
 	n = ''
 	p = ''
 	f = ''
+
+
+ 	1 	2 	3 	4 	5 	6 	7 	8 	9 	10 	11 	12 	13 	14 	15 	16 	17 	18 	19 	20 	21 	22 	23
+0 	b 	  	  	ou 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	 
+1 	  	icg 	r 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	 
+2 	  	  	r 	  	  	  	  	  	  	  	e 	  	  	  	  	  	  	  	  	  	  	  	 
+3 	b 	  	  	  	  	  	  	e 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	 
+4 	  	  	  	  	b 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	 
+5 	  	  	  	  	  	icg 	r 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	 
+6 	  	  	  	  	  	  	r 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	 
+7 	  	  	  	  	  	  	  	  	  	  	  	  	e 	  	  	  	  	  	  	  	  	  	 
+8 	  	  	  	  	  	  	  	  	icg 	r 	  	  	  	  	  	  	  	  	  	  	  	  	 
+9 	b 	  	  	ou 	  	  	  	  	  	r 	n 	s 	  	  	  	  	  	  	  	  	  	  	f
+10 	b 	  	  	ou 	  	  	  	  	  	  	n 	s 	  	  	  	  	  	  	  	  	  	  	f
+11 	b 	  	  	ou 	  	  	  	  	  	  	  	s 	  	  	  	  	  	  	  	  	  	  	f
+12 	b 	  	  	ou 	  	  	  	  	  	  	n 	  	  	  	  	  	  	  	  	  	  	  	f
+13 	  	  	  	  	  	  	  	  	  	  	  	  	  	icg 	r 	  	  	  	  	  	  	  	 
+14 	b 	  	  	  	  	  	  	  	  	  	  	  	  	  	r 	n 	s 	x 	  	t 	  	  	 
+15 	b 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	n 	s 	  	  	  	  	  	 
+16 	b 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	s 	x 	  	t 	  	  	 
+17 	b 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	n 	  	x 	  	t 	  	  	 
+18 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	icg 	r 	  	  	 
+19 	b 	  	  	ou 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	r 	n 	s 	f
+20 	b 	  	  	ou 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	n 	s 	f
+21 	b 	  	  	ou 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	s 	f
+22 	b 	  	  	ou 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	n 	  	f
+23 	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	  	 
