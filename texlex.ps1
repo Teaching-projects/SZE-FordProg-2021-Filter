@@ -98,9 +98,10 @@ function main {
     if($global:result.Length -eq 0){
         write-host "`r`n   INFO:  nothing found or no range to put out "
     }else{
+        write-host "`r`n   OUTPUT:`r`n"
         $global:result
     }
-
+    write-host "`r`n   DATA STRUCTURES:`r`n"
     write-host ($global:result_data | out-string)
 } #main
 
