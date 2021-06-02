@@ -8,9 +8,11 @@ function main {
 
     #test data
 
-    $file = "D:\_EGYETEMI\FordProg\INGR_lizenz_roh.txt"
-    $cmd = "#b#g-----\r\n\s{2}#r7#e#g\s\d{1,3}[.]\d{1,3}#r4#sdata#"
-    $cmd += '#f#'
+    <# $file = "D:\_EGYETEMI\FordProg\INGR_lizenz_roh.txt"
+    $cmd = "#b#r0#e#g-----\r\n#r5#n#"
+    $cmd += "#u#b#g\r\n\s{2}#r4#e#g\d{1,3}[.]\d{1,3}#r-1#n#sarray1#b#g\r\n\s{2}#x#iconcurr#r-1#"
+    $cmd += '#f#' #>
+
     
     $cmd = $cmd -replace '##','#'
     write-host '   INFO:  input data:  ' $cmd"`r`n   "$file 
@@ -55,16 +57,16 @@ function main {
 
     $global:states[0] = @{'b' = 1;'o' = 4;'u' = 4}
     $global:states[1] = @{'i' = 2;'c' = 2;'g' = 2;'r' = 3} 
-    $global:states[2] = @{'b' = 1;'r' = 3;'e' = 8; 'f' = 23} 
-    $global:states[3] = @{'b' = 1;'e' = 8; 'f' = 23} 
+    $global:states[2] = @{'b' = 1;'r' = 3;'e' = 8;'x' = 18; 'f' = 23} 
+    $global:states[3] = @{'b' = 1;'e' = 8;'x' = 18; 'f' = 23} 
     $global:states[4] = @{'b' = 5} 
     $global:states[5] = @{'i' = 6;'c' = 6;'g' = 6;'r' = 7} 
     $global:states[6] = @{'r' = 7;'e' = 13}
     $global:states[7] = @{'e' = 13}
     $global:states[8] = @{'i' = 9;'c' = 9;'g' = 9;'r' = 10} 
-    $global:states[9] = @{'b' = 1;'o' = 4;'u' = 4;'r' = 10;'n' = 11;'s' = 12; 'f' = 23} 
-    $global:states[10] = @{'b' = 1;'o' = 4;'u' = 4;'n' = 11;'s' = 12; 'f' = 23}
-    $global:states[11] = @{'b' = 1;'o' = 4;'u' = 4;'s' = 12; 'f' = 23}
+    $global:states[9] = @{'b' = 1;'o' = 4;'u' = 4;'r' = 10;'n' = 11;'s' = 12;'x' = 18; 'f' = 23} 
+    $global:states[10] = @{'b' = 1;'o' = 4;'u' = 4;'n' = 11;'s' = 12;'x' = 18; 'f' = 23}
+    $global:states[11] = @{'b' = 1;'o' = 4;'u' = 4;'s' = 12;'x' = 18; 'f' = 23}
     $global:states[12] = @{'b' = 1;'o' = 4;'u' = 4;'n' = 11;'f' = 23}
     $global:states[13] = @{'i' = 14;'c' = 14;'g' = 14;'r' = 15} 
     $global:states[14] = @{'b' = 1;'r' = 15;'n' = 16;'s' = 17;'x' = 18;'t' = 20} 
@@ -88,7 +90,8 @@ function main {
         write-host "`r`n ERROR:  something went wrong..."
         exit
     }
-
+    
+    #write-host ($global:cmdset | out-string)
     cmdset_read 
 
     $global:filetext = ([IO.File]::ReadAllText($file)).trim()
@@ -106,26 +109,28 @@ function main {
 } #main
 
 function execute{
-    $counter = 0
     $global:index = 0
-    $cond = $false
     foreach ($step in $global:seq){ 
         $loop_result =''
         $t = 1
+        $counter = 0
+        $cond = $false
         if($step.ContainsKey('o') -and (-not $step.ContainsKey('u')) ){ 
             if([int]$step['t'] -lt 1 ){
                 write-host 't is less then 1...'
                 exit
             }else{
                 $t = [int]$step['t']
-                $cond = $false
-
             }
         }
-        while((($counter -lt $t) -or ($null -eq $t)) -and (-not $cond)){
-            $cond_pos = step_find $step
-            $iloop_result = ''
+       
+        #write-host "t: $t  "
+        $cond_pos = step_find $step
+        while(($counter -lt $t)  -and (-not $cond)){
+
+
             foreach ($iloop in $step.loop){
+                $iloop_result = ''
                 $normal = $true
                 $nomatch = $false
                 $range = loop_find $iloop
@@ -136,15 +141,18 @@ function execute{
                 }
                 if($range.ContainsKey('b') -and -not $range.ContainsKey('e')){
                     $normal = $false
-                    $global:index += ($range.Get_Item('b'))
+                    $global:index = ($range.Get_Item('b'))
                 }
                 if($normal){
                     if([int]$range.Get_Item('b') -gt [int]$range.Get_Item('e')){
                         write-host "`r`n ERROR:  range error `r`n"
                         exit
                     }
-                    if((($range.Get_Item('b') -lt $cond_pos) -and ($range.Get_Item('e')  -lt $cond_pos)) -or (($counter -lt $t) -or ($null -eq $t))){
+
+                    if(($step.ContainsKey('u') -and ($range.Get_Item('b') -lt $cond_pos) -and ($range.Get_Item('e') -lt $cond_pos)) -or(-not $step.ContainsKey('u')) -or
+                     ( ($step.ContainsKey('u') -and $cond_pos -eq -1 )) ){ # -or (($counter -lt $t) -or ($null -eq $t))){
                         $iloop_result += $global:filetext.substring($range.Get_Item('b'), $range.Get_Item('e')-$range.Get_Item('b')+1)
+                        #write-host $iloop_result
                         if ($iloop['n']){
                             $iloop_result += "`r`n"
                         }
@@ -155,13 +163,17 @@ function execute{
                             $global:result_data[[string]($iloop['s'])] += $iloop_result
                         }
                         $loop_result += $iloop_result
+                        #write-host $loop_result
+
                     }else{
                         $cond = $true
                     }
-                    $global:index += ($range.Get_Item('e'))
+                    $global:index = ($range.Get_Item('e'))
                 }
             }
-            if($step.ContainsKey('o')){ $counter += 1 }elseif($counter -lt 1){ $counter = 1}
+            if($step.ContainsKey('o')){ $counter += 1 }
+            elseif($step.ContainsKey('u')){$counter = 0}
+            else{$counter = 1}  
         }
         if ($step['n']){
             $loop_result += "`r`n"
@@ -184,7 +196,7 @@ function step_find{
         #write-host $key
         if($key.indexof('i') -gt -1 -or $key.indexof('c') -gt -1 -or $key.indexof('g') -gt -1 ){
             $expr1 = (("find_"+$key)+' '+($global:index)+' "'+($step.Get_Item($key))+'" '+($step.Get_Item('r'))).Replace("`r`n","")
-            $pos = Invoke-Expression $expr1 
+            $pos = $global:index + (Invoke-Expression $expr1) 
         }
     }
     if(-not $step.ContainsKey('i') -and -not $step.ContainsKey('c') -and -not $step.ContainsKey('g') -and $step.ContainsKey('r')){
@@ -202,7 +214,7 @@ function loop_find{
         $rel = $key.substring(0,1)+'r'
         if($key.indexof('i') -gt -1 -or $key.indexof('c') -gt -1 -or $key.indexof('g') -gt -1 ){
             $expr1 = (("find_"+($key.Replace("e","")).Replace("b",""))+' '+($global:index)+' "'+($step.Get_Item($key))+'" '+($step.Get_Item($rel))).Replace("`r`n","")
-            $pos[$key.substring(0,1)] = Invoke-Expression $expr1 
+            $pos[$key.substring(0,1)] = $global:index + (Invoke-Expression $expr1) 
         }
     }
     if(-not $pos.ContainsKey('b') -and -not $step.ContainsKey('bi') -and -not $step.ContainsKey('bc') -and -not $step.ContainsKey('bg') -and $step.ContainsKey('br')){
@@ -277,12 +289,15 @@ function cmdset_read{
         if($cmd.keys -eq 'f'){ 
             $global:seq[$seq_counter][[string]$cmd.keys] = ''
         }
+        #Write-Host 'old ' $state 'cmd: ' $cmd.keys
         $state = ($global:states[$state])[[string]$cmd.keys]
         if (-not $state ){
             write-host 'state error'
         }
+        #Write-Host 'new: ' $state
     }
-
+    
+    #write-host ($global:seq | out-string)
     if($state -eq 23){
         if(($pair_counter['o'] -eq $pair_counter['t']) -and ($pair_counter['u'] -eq $pair_counter['x'])){
             Write-Host "`r`n   INFO:  Command sequence processed succsesfully"

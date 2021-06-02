@@ -1,10 +1,12 @@
-# FordProg beadandó
+## FordProg beadandó
 
+### Rövid ismertetés
 Szöveges állomány tartalmának feldolgozása, abból megadott elemek adatszerkezetbe, vagy a kimenetre írása, parancskódokkal megadott módon.
 
-Példa a parancs szerkezetére:
-'#u#b#iasdf#r2#e#ilkjh#r-1#t2#p#f#'
+###Példa a parancs szerkezetére:
+'#b#r0#e#g-----\r\n#r5#n#u#b#g\r\n\s{2}#r4#e#g\d{1,3}[.]\d{1,3}#r-1#n#sarray1#b#g\r\n\s{2}#x#iconcurr#r-1#f#'
 
+### Magyarázat:  
 	b = szakasz kezdete
 	e = szakasz vége
 	i = case insens. keresés stringre
@@ -17,10 +19,9 @@ Példa a parancs szerkezetére:
 	x = végfeltétellel megadott többszörözés végfeltétele
 	s = a megelőző kinyert tartalom adatszerkezetbe írása
 	n = soremelés beszúrása
-	p = kimenetre írás
 	f = parancsok vége jel
 
-A parancsok argumentum tipusai ('' = nincs argumentum):
+### A parancsok argumentum tipusai ('' = nincs argumentum):
 
 	b = ''
 	e = ''
@@ -34,33 +35,44 @@ A parancsok argumentum tipusai ('' = nincs argumentum):
 	x = 'string'
 	s = 'string'
 	n = ''
-	p = ''
 	f = ''
 
+## A texlex.ps1 Windows 10 alatt a Powershell 5.1.18362.1474 verziójával került fejlesztésre. A program indítható parancssorról. A fenti parancs és a hozzá tartozó szöveges állománnyal a program indítása PS promptról:  
+. D:\_EGYETEMI\FordProg\texlex.ps1 '#b#r0#e#g-----\r\n#r5#n#u#b#g\r\n\s{2}#r4#e#g\d{1,3}[.]\d{1,3}#r-1#n#sarray1#b#g\r\n\s{2}#x#iconcurr#r-1#f#' "D:\_EGYETEMI\FordProg\INGR_lizenz_roh.txt"
+ 
+A program válasza:  
+  
+INFO:  input data:   #b#r0#e#g-----\r\n#r5#n#u#b#g\r\n\s{2}#r4#e#g\d{1,3}[.]\d{1,3}#r-1#n#sarray1#b#g\r\n\s{2}#x#iconcurr#r-1#f#  
+   D:\_EGYETEMI\FordProg\INGR_lizenz_roh.txt  
+  
+   INFO:  file valid  
+  
+   INFO:  splitter literal :  #  
+  
+   INFO:  command syntactically valid  
+  
+   INFO:  Command sequence processed succsesfully  
+  
+   OUTPUT:  
 
-|    | 1 | 2   | 3 | 4  | 5 | 6   | 7 | 8 | 9   | 10 | 11 | 12 | 13 | 14  | 15 | 16 | 17 | 18 | 19  | 20 | 21 | 22 | 23 |
-| -- | - | --- | - | -- | - | --- | - | - | --- | -- | -- | -- | -- | --- | -- | -- | -- | -- | --- | -- | -- | -- | -- |
-| 0  | b |     |   | ou |   |     |   |   |     |    |    |    |    |     |    |    |    |    |     |    |    |    |    |
-| 1  |   | icg | r |    |   |     |   |   |     |    |    |    |    |     |    |    |    |    |     |    |    |    |    |
-| 2  |   |     | r |    |   |     |   |   |     |    | e  |    |    |     |    |    |    |    |     |    |    |    |    |
-| 3  | b |     |   |    |   |     |   | e |     |    |    |    |    |     |    |    |    |    |     |    |    |    |    |
-| 4  |   |     |   |    | b |     |   |   |     |    |    |    |    |     |    |    |    |    |     |    |    |    |    |
-| 5  |   |     |   |    |   | icg | r |   |     |    |    |    |    |     |    |    |    |    |     |    |    |    |    |
-| 6  |   |     |   |    |   |     | r |   |     |    |    |    |    |     |    |    |    |    |     |    |    |    |    |
-| 7  |   |     |   |    |   |     |   |   |     |    |    |    | e  |     |    |    |    |    |     |    |    |    |    |
-| 8  |   |     |   |    |   |     |   |   | icg | r  |    |    |    |     |    |    |    |    |     |    |    |    |    |
-| 9  | b |     |   | ou |   |     |   |   |     | r  | n  | s  |    |     |    |    |    |    |     |    |    |    | f  |
-| 10 | b |     |   | ou |   |     |   |   |     |    | n  | s  |    |     |    |    |    |    |     |    |    |    | f  |
-| 11 | b |     |   | ou |   |     |   |   |     |    |    | s  |    |     |    |    |    |    |     |    |    |    | f  |
-| 12 | b |     |   | ou |   |     |   |   |     |    | n  |    |    |     |    |    |    |    |     |    |    |    | f  |
-| 13 |   |     |   |    |   |     |   |   |     |    |    |    |    | icg | r  |    |    |    |     |    |    |    |    |
-| 14 | b |     |   |    |   |     |   |   |     |    |    |    |    |     | r  | n  | s  | x  |     | t  |    |    |    |
-| 15 | b |     |   |    |   |     |   |   |     |    |    |    |    |     |    | n  | s  |    |     |    |    |    |    |
-| 16 | b |     |   |    |   |     |   |   |     |    |    |    |    |     |    |    | s  | x  |     | t  |    |    |    |
-| 17 | b |     |   |    |   |     |   |   |     |    |    |    |    |     |    | n  |    | x  |     | t  |    |    |    |
-| 18 |   |     |   |    |   |     |   |   |     |    |    |    |    |     |    |    |    |    | icg | r  |    |    |    |
-| 19 | b |     |   | ou |   |     |   |   |     |    |    |    |    |     |    |    |    |    |     | r  | n  | s  | f  |
-| 20 | b |     |   | ou |   |     |   |   |     |    |    |    |    |     |    |    |    |    |     |    | n  | s  | f  |
-| 21 | b |     |   | ou |   |     |   |   |     |    |    |    |    |     |    |    |    |    |     |    |    | s  | f  |
-| 22 | b |     |   | ou |   |     |   |   |     |    |    |    |    |     |    |    |    |    |     |    | n  |    | f  |
-| 23 |   |     |   |    |   |     |   |   |     |    |    |    |    |     |    |    |    |    |     |    |    |    |    |
+SPLM: Displaying Seats In Use...
+
+SPLM             Seat Grade
+Seat Checkout      /Daily       Prod.         Client     Client          Client
+No.  Time          Expires Pid  Tag   Batch   Name       Address         Node
+--------------------------------------------------------------------------------
+ 4 04-Feb-21 07:40 3D    17940 3D   Regular  robert
+13 04-Feb-21 07:15 SPP   31388 SPP  Regular  rgiglberg
+14 04-Feb-21 07:36 SPP   1436 SPP  Regular  klimstein
+18 04-Feb-21 07:15 CW3   11208 CW3  Regular  Matyschok
+23 04-Feb-21 06:38 S3D   27688 S3D  Regular  oroz
+24 04-Feb-21 07:15 S3D   11208 S3D  Regular  Matyschok
+25 04-Feb-21 07:38 S3D   9416 S3D  Regular  Neumaier
+
+
+   DATA STRUCTURES:
+
+
+Name                           Value
+----                           -----
+array1...                      { 4 04-Feb-21 07:40 3D    17940 3D   Regular  robert     ...
