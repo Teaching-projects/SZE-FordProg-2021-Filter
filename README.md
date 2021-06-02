@@ -38,7 +38,12 @@ Szöveges állomány tartalmának feldolgozása, abból megadott elemek adatszer
 	f = ''
 
 ## A fejlesztés körülményei
-A texlex.ps1 Windows 10 alatt a Powershell 5.1.18362.1474 verziójával került fejlesztésre. A program indítható parancssorról. A fenti parancs és a hozzá tartozó szöveges állománnyal a program indítása PS promptról:  
+A texlex.ps1 Windows 10 alatt a Powershell 5.1.18362.1474 verziójával került fejlesztésre.  
+A program paraméterei: param([string]$cmd='', [string]$file='', $split = '#')  
+* cmd = a parancs  
+* file = a szöveges állomány teljes elérési útja
+* split az alapértelmezett "#" elválasztó karaktert opcionálisan meg lehet adni más karakternek.  
+ A program indítható parancssorról. A fenti parancs és a hozzá tartozó szöveges állománnyal a program indítása PS promptról:  
 . D:\_EGYETEMI\FordProg\texlex.ps1 '#b#r0#e#g-----\r\n#r5#n#u#b#g\r\n\s{2}#r4#e#g\d{1,3}[.]\d{1,3}#r-1#n#sarray1#b#g\r\n\s{2}#x#iconcurr#r-1#f#' "D:\_EGYETEMI\FordProg\INGR_lizenz_roh.txt"  
  
 A program válasza:  
@@ -55,10 +60,10 @@ INFO:  input data:   #b#r0#e#g-----\r\n#r5#n#u#b#g\r\n\s{2}#r4#e#g\d{1,3}[.]\d{1
    INFO:  Command sequence processed succsesfully  
   
    OUTPUT:  
-
-SPLM: Displaying Seats In Use...
   
-SPLM             Seat Grade
+  SPLM: Displaying Seats In Use...
+  
+  SPLM             Seat Grade
 Seat Checkout      /Daily       Prod.         Client     Client          Client  
 No.  Time          Expires Pid  Tag   Batch   Name       Address         Node  
 --------------------------------------------------------------------------------  
@@ -76,4 +81,5 @@ No.  Time          Expires Pid  Tag   Batch   Name       Address         Node
   
 Name                           Value  
 ----                           -----  
-array1...                      { 4 04-Feb-21 07:40 3D    17940 3D   Regular  robert     ...
+array1...                      { 4 04-Feb-21 07:40 3D    17940 3D   Regular  robert     ...  
+
