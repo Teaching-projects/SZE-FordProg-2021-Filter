@@ -65,14 +65,14 @@ INFO:  input data:   #b#r0#e#g-----\r\n#r5#n#u#b#g\r\n\s{2}#r4#e#g\d{1,3}[.]\d{1
 <p>SPLM             Seat Grade  
 Seat Checkout      /Daily       Prod.         Client     Client          Client  
 No.  Time          Expires Pid  Tag   Batch   Name       Address         Node</p>  
---------------------------------------------------------------------------------  
- 4 04-Feb-21 07:40 3D    17940 3D   Regular  robert  
-13 04-Feb-21 07:15 SPP   31388 SPP  Regular  rgiglberg  
-14 04-Feb-21 07:36 SPP   1436 SPP  Regular  klimstein  
-18 04-Feb-21 07:15 CW3   11208 CW3  Regular  Matyschok  
-23 04-Feb-21 06:38 S3D   27688 S3D  Regular  oroz  
-24 04-Feb-21 07:15 S3D   11208 S3D  Regular  Matyschok  
-25 04-Feb-21 07:38 S3D   9416 S3D  Regular  Neumaier  
+<p>--------------------------------------------------------------------------------  
+<p> 4 04-Feb-21 07:40 3D    17940 3D   Regular  robert  </p>
+<p>13 04-Feb-21 07:15 SPP   31388 SPP  Regular  rgiglberg  </p>
+<p>14 04-Feb-21 07:36 SPP   1436 SPP  Regular  klimstein  </p>
+<p>18 04-Feb-21 07:15 CW3   11208 CW3  Regular  Matyschok  </p>
+<p>23 04-Feb-21 06:38 S3D   27688 S3D  Regular  oroz  </p>
+<p>24 04-Feb-21 07:15 S3D   11208 S3D  Regular  Matyschok  </p>
+<p>25 04-Feb-21 07:38 S3D   9416 S3D  Regular  Neumaier  </p>
   
   
    DATA STRUCTURES:  
