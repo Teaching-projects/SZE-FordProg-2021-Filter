@@ -20,6 +20,7 @@ Szöveges állomány tartalmának feldolgozása, abból megadott elemek adatszer
 	s = a megelőző kinyert tartalom adatszerkezetbe írása
 	n = soremelés beszúrása
 	f = parancsok vége jel
+	# = a parancsok elválasztó jele
 
 ### A parancsok argumentum tipusai ('' = nincs argumentum):
 
@@ -78,7 +79,7 @@ No.  Time          Expires Pid  Tag   Batch   Name       Address         Node</p
    DATA STRUCTURES:  
   
   
-Name                           Value  
-----                           -----  
+<p>Name                           Value  </p>
+<p>----                           -----  </p>
 array1...                      { 4 04-Feb-21 07:40 3D    17940 3D   Regular  robert     ...  
 

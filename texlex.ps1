@@ -1,18 +1,6 @@
 ﻿param([string]$cmd='', [string]$file='', $split = '#') 
 
-#region
-
-#endregion
-
 function main {
-
-    #test data
-
-    <# $file = "D:\_EGYETEMI\FordProg\INGR_lizenz_roh.txt"
-    $cmd = "#b#r0#e#g-----\r\n#r5#n#"
-    $cmd += "#u#b#g\r\n\s{2}#r4#e#g\d{1,3}[.]\d{1,3}#r-1#n#sarray1#b#g\r\n\s{2}#x#iconcurr#r-1#"
-    $cmd += '#f#' #>
-
     
     $cmd = $cmd -replace '##','#'
     write-host '   INFO:  input data:  ' $cmd"`r`n   "$file 
@@ -45,8 +33,6 @@ function main {
                 p = ''; #output stream
                 f = ''} # end symbol
 
-    $global:seq = $none
-    $global:cmdset = $none
     $global:result = ''
     $global:result_data = @{}
 
@@ -124,7 +110,6 @@ function execute{
             }
         }
        
-        #write-host "t: $t  "
         $cond_pos = step_find $step
         while(($counter -lt $t)  -and (-not $cond)){
 
@@ -152,7 +137,6 @@ function execute{
                     if(($step.ContainsKey('u') -and ($range.Get_Item('b') -lt $cond_pos) -and ($range.Get_Item('e') -lt $cond_pos)) -or(-not $step.ContainsKey('u')) -or
                      ( ($step.ContainsKey('u') -and $cond_pos -eq -1 )) ){ # -or (($counter -lt $t) -or ($null -eq $t))){
                         $iloop_result += $global:filetext.substring($range.Get_Item('b'), $range.Get_Item('e')-$range.Get_Item('b')+1)
-                        #write-host $iloop_result
                         if ($iloop['n']){
                             $iloop_result += "`r`n"
                         }
@@ -163,7 +147,6 @@ function execute{
                             $global:result_data[[string]($iloop['s'])] += $iloop_result
                         }
                         $loop_result += $iloop_result
-                        #write-host $loop_result
 
                     }else{
                         $cond = $true
@@ -193,7 +176,6 @@ function step_find{
     )
     $pos = -1
     foreach($key in $step.keys){
-        #write-host $key
         if($key.indexof('i') -gt -1 -or $key.indexof('c') -gt -1 -or $key.indexof('g') -gt -1 ){
             $expr1 = (("find_"+$key)+' '+($global:index)+' "'+($step.Get_Item($key))+'" '+($step.Get_Item('r'))).Replace("`r`n","")
             $pos = $global:index + (Invoke-Expression $expr1) 
@@ -289,15 +271,12 @@ function cmdset_read{
         if($cmd.keys -eq 'f'){ 
             $global:seq[$seq_counter][[string]$cmd.keys] = ''
         }
-        #Write-Host 'old ' $state 'cmd: ' $cmd.keys
         $state = ($global:states[$state])[[string]$cmd.keys]
         if (-not $state ){
             write-host 'state error'
         }
-        #Write-Host 'new: ' $state
     }
-    
-    #write-host ($global:seq | out-string)
+
     if($state -eq 23){
         if(($pair_counter['o'] -eq $pair_counter['t']) -and ($pair_counter['u'] -eq $pair_counter['x'])){
             Write-Host "`r`n   INFO:  Command sequence processed succsesfully"
