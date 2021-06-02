@@ -62,10 +62,9 @@ INFO:  input data:   #b#r0#e#g-----\r\n#r5#n#u#b#g\r\n\s{2}#r4#e#g\d{1,3}[.]\d{1
    OUTPUT:  
   
   SPLM: Displaying Seats In Use...
-  
-  SPLM             Seat Grade
+<p>SPLM             Seat Grade  
 Seat Checkout      /Daily       Prod.         Client     Client          Client  
-No.  Time          Expires Pid  Tag   Batch   Name       Address         Node  
+No.  Time          Expires Pid  Tag   Batch   Name       Address         Node</p>  
 --------------------------------------------------------------------------------  
  4 04-Feb-21 07:40 3D    17940 3D   Regular  robert  
 13 04-Feb-21 07:15 SPP   31388 SPP  Regular  rgiglberg  
